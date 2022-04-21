@@ -6,14 +6,31 @@
   版本：v1.0
 -->
 <template>
-  <el-tree :data="menus" :props="defaultProps" @node-click="handleNodeClick">
+  <el-tree
+    :data="menus"
+    :props="defaultProps"
+    :expand-on-click-node="false"
+    show-checkbox
+    node-key="catId"
+    :default-expanded-keys="expandKey"
+  >
     <span class="custom-tree-node" slot-scope="{ node, data }">
       <span>{{ node.label }}</span>
       <span>
-        <el-button type="text" size="mini" @click="() => append(data)">
+        <el-button
+          v-if="node.level <= 2"
+          type="text"
+          size="mini"
+          @click="() => append(data)"
+        >
           增加
         </el-button>
-        <el-button type="text" size="mini" @click="() => remove(node, data)">
+        <el-button
+          v-if="node.childNodes.length == 0"
+          type="text"
+          size="mini"
+          @click="() => remove(node, data)"
+        >
           删除
         </el-button>
       </span>
@@ -32,6 +49,7 @@ export default {
   data() {
     return {
       menus: [],
+      expandKey: [],
       defaultProps: {
         //子菜单的数据
         children: "children",
@@ -40,9 +58,6 @@ export default {
     };
   },
   methods: {
-    handleNodeClick(data) {
-      console.log(data);
-    },
     getMenus() {
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
@@ -52,6 +67,42 @@ export default {
         console.log("收到的分类数据", data.data);
         this.menus = data.data;
       });
+    },
+    append(data) {
+      console.log("append", data);
+    },
+    remove(node, data) {
+      var ids = [data.catId];
+      //弹框提示
+      this.$confirm(`是否删除该[${data.name}]分类, 是否继续?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$http({
+            url: this.$http.adornUrl("/product/category/delete"),
+            method: "post",
+            data: this.$http.adornData(ids, false),
+          }).then(({ data }) => {
+            this.$message({
+              message: `删除分类成功`,
+              type: "success",
+            });
+            //删除成功以后，需要刷新menu
+            this.getMenus();
+            //设置需要展开的菜单
+            this.expandKey = [node.parent.data.catId];
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+
+      console.log("remove", node, data);
     },
   },
   //计算属性 类似于data概念
@@ -73,5 +124,7 @@ export default {
   activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
+
+
 <style scoped>
 </style>

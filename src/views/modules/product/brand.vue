@@ -63,6 +63,14 @@
         align="center"
         label="品牌logo地址"
       >
+        <template slot-scope="scope">
+          <!-- <el-image
+            style="width: 100px; height: 80px"
+            :src="scope.row.logo"
+            fit="contain"
+          ></el-image> -->
+          <img :src="scope.row.logo" style="width: 100px; height: 80px">
+        </template>
       </el-table-column>
       <el-table-column
         prop="descript"
@@ -227,7 +235,9 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle(id) {
+      //设置弹出面板的开关
       this.addOrUpdateVisible = true;
+      console.log("设置弹出面板的开关触发",this.addOrUpdateVisible)
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id);
       });

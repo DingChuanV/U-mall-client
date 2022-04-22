@@ -69,7 +69,7 @@
             :src="scope.row.logo"
             fit="contain"
           ></el-image> -->
-          <img :src="scope.row.logo" style="width: 100px; height: 80px">
+          <img :src="scope.row.logo" style="width: 100px; height: 80px" />
         </template>
       </el-table-column>
       <el-table-column
@@ -185,10 +185,11 @@ export default {
       let { brandId, showStatus } = data;
       //发送修改请求
       this.$http({
-        url: this.$http.adornUrl("/product/brand/update"),
+        url: this.$http.adornUrl("/product/brand/update/status"),
         method: "post",
-        data: this.$http.adornData({ brandId, showStatus: showStatus }, false),
+        data: this.$http.adornData({ brandId, showStatus }, false),
       }).then(({ data }) => {
+        console.log("更改状态的后：",data)
         this.$message({
           message: "品牌已显示",
           type: "success",
@@ -237,7 +238,7 @@ export default {
     addOrUpdateHandle(id) {
       //设置弹出面板的开关
       this.addOrUpdateVisible = true;
-      console.log("设置弹出面板的开关触发",this.addOrUpdateVisible)
+      console.log("设置弹出面板的开关触发", this.addOrUpdateVisible);
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id);
       });

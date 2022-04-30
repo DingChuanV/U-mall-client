@@ -2,10 +2,10 @@
   <div>
     <el-select placeholder="请选择" v-model="brandId" filterable clearable>
       <el-option
-        v-for="item in brands"
-        :key="item.brandId"
-        :label="item.brandName"
-        :value="item.brandId"
+        v-for="index in brands"
+        :key="index.brandId"
+        :label="index.brandName"
+        :value="index.brandId"
       ></el-option>
     </el-select>
   </div>
